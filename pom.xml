@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -7,45 +8,57 @@
         <version>7</version>
     </parent>
     <groupId>com.sendgrid</groupId>
-    <artifactId>sendgrid-java</artifactId>
-    <name>SendGrid Java helper library</name>
+    <artifactId>sendgrid-kotlin</artifactId>
+    <name>SendGrid Kotlin helper library</name>
     <version>4.2.1</version>
-    <description>This Java module allows you to quickly and easily send emails through SendGrid using Java.</description>
-    <url>https://github.com/sendgrid/sendgrid-java</url>
+    <description>This Kotlin module allows you to quickly and easily send emails through SendGrid using any JVM
+        compatible language.
+    </description>
+    <url>https://github.com/desiderantes/sendgrid-kotlin</url>
     <licenses>
         <license>
-        <name>The MIT License (MIT)</name>
-        <url>https://github.com/sendgrid/java-http-client/blob/master/LICENSE</url>
-        <distribution>repo</distribution>
+            <name>The MIT License (MIT)</name>
+            <url>https://github.com/sendgrid/java-http-client/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
     <properties>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.6</jackson.version>
+        <kotlin.version>1.2.61</kotlin.version>
     </properties>
     <scm>
-        <url>https://github.com/sendgrid/sendgrid-java</url>
-        <connection>scm:git:git@github.com:sendgrid/sendgrid-java.git</connection>
-        <developerConnection>scm:git:git@github.com:sendgrid/sendgrid-java.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
-    <build>        
+        <url>https://github.com/desiderantes/sendgrid-kotlin</url>
+        <connection>scm:git:git@github.com:desiderantes/sendgrid-kotlin.git</connection>
+        <developerConnection>scm:git:git@github.com:desiderantes/sendgrid-kotlin.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <build>
         <resources>
             <resource>
                 <directory>${basedir}</directory>
                 <includes>
-                     <include>LICENSE.txt</include>
+                    <include>LICENSE.txt</include>
                 </includes>
             </resource>
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.2.0</version>
+                        <scope>test</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.3.1</version>
+
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -85,6 +98,55 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <developers>
@@ -118,15 +180,91 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.11</version>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+            <version>${jackson.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jetbrains.kotlin</artifactId>
+                    <groupId>kotlin-stdlib</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org.jetbrains.kotlin</artifactId>
+                    <groupId>kotlin-reflect</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.spek</groupId>
+            <artifactId>spek-api</artifactId>
+            <version>1.1.5</version>
             <scope>test</scope>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jetbrains.kotlin</artifactId>
+                    <groupId>kotlin-stdlib</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org.jetbrains.kotlin</artifactId>
+                    <groupId>kotlin-reflect</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.spek</groupId>
+            <artifactId>spek-junit-platform-engine</artifactId>
+            <version>1.1.5</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>org.jetbrains.kotlin</artifactId>
+                    <groupId>kotlin-stdlib</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org.jetbrains.kotlin</artifactId>
+                    <groupId>kotlin-reflect</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.1.0</version>
+            <version>2.19.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -4,6 +4,38 @@ The following code assumes you are storing the API key in an environment variabl
 
 This is the minimum code needed to send an email.
 
+```kotlin
+import com.sendgrid.*
+import com.sendgrid.helpers.mail.*
+
+class SendGridExample {
+    @Throws(SendGridException::class)
+    fun main(args: Array<String>) {
+        val from = From("test@example.com", "Example User")
+        val to = To("test@example.com", "Example User")
+        val subject = Subject("Sending with SendGrid is Fun")
+        val plainTextContent = PlainTextContent("and easy to do anywhere, even with Java")
+        val htmlContent = HtmlContent("<strong>and easy to do anywhere, even with Java</strong>")
+        val email = SendGridMessage(from,
+                                                to,
+                                                subject,
+                                                plainTextContent,
+                                                htmlContent)
+
+        val sendgrid = SendGrid(System.getenv("SENDGRID_API_KEY"))
+        try {
+            val response = sendgrid.send(email)
+            System.out.println(response.getStatusCode())
+            System.out.println(response.getBody())
+            System.out.println(response.getHeaders())
+        } catch (ex : SendGridException) {
+            System.err.println(ex)
+            throw ex
+        }
+    }
+}
+```
+
 ```java
 import com.sendgrid.*;
 import com.sendgrid.helpers.mail.*;
